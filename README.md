@@ -7,13 +7,14 @@ TypeScript is an open source project maintained by Microsoft, `represents a synt
 > It indeed works at build time.
 
 Course link: https://www.typescript-training.com/course/fundamentals-v4
+
 Course repo: ```git clone https://github.com/mike-north/typescript-courses```
 
 ### 1.1.2 - Three parts of TypeScript
 
-1 - Programming language: the language `itself` (with `added features` like types).
-2 - Compiler: `converts the code` into clean, readable JavaScript.
-3 - Language server: enables features like `autocompletion in IDEs` like VS Code.
+1. Programming language: the language `itself` (with `added features` like types).
+2. Compiler: `converts the code` into clean, readable JavaScript.
+3. Language server: enables features like `autocompletion in IDEs` like VS Code.
 
 ### 1.1.3 - Benefits
 
