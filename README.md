@@ -1,23 +1,26 @@
-# 1 - TypeScript Fundamentals
+# 2 - Variables and Values
 
-## 1.1 - Introduction
+## 2.1 - Compiling TypeScript with TSC
 
-TypeScript is an open source project maintained by Microsoft, `represents a syntactic superset` of JavaScript, so, it starts when .js ends.
+### 2.1.1 - Setup info
 
-> It indeed works at build time.
+Inside the repo, navigate to `packages/welcome-to-ts`. The key files here include:
 
-Course link: https://www.typescript-training.com/course/fundamentals-v4
+- package.json: Defines `project dependencies` (TypeScript 5.3 in beta).
+- tsconfig.json: `Configuration for the TypeScript compiler`, which controls things like `output language` level (ES2015, ES2017, ES2022).
+- index.ts: The actual TypeScript `file with code`.
 
-Course repo: ```git clone https://github.com/mike-north/typescript-courses```
+### 2.1.2 - Compilation
 
-### 1.1.2 - Three parts of TypeScript
+![](https://i.imgur.com/DB7XEjg.png)
 
-1. Programming language: the language `itself` (with `added features` like types).
-2. Compiler: `converts the code` into clean, readable JavaScript.
-3. Language server: enables features like `autocompletion in IDEs` like VS Code.
+- Compiling the TypeScript code generates JavaScript in the `src/dist` folder. The `output varies based on the language level set in the tsconfig.json` file.
+- The code in `index.ts` can and in this case includes modern JavaScript features such as `async/await` (ES2017) and private static fields (ES2022).
 
-### 1.1.3 - Benefits
+  > For example, when targeting ES2017, the output uses polyfills (like `_Foo_bar`) to mimic features unsupported in older environments, while ES2022 natively supports private static fields.
 
-- Provides `early feedback` on potential issues at compile time.
-- Makes your intent clear, allowing for `better maintainability and easier debugging`.
-- `Reduces runtime errors` by shifting type errors to the development phase.
+- Enabling `"declaration": true` in tsconfig.json `generates .d.ts files` alongside the JavaScript output. These files contain type information, `allowing other developers to use TypeScript types even when the main output is JavaScript`.
+
+- Module resolution is the mechanism by which TypeScript finds the files referenced in imports. The `Node option is the most common setting, searching for modules in node_modules` and using relative paths.
+
+- TypeScript provides `flexibility by compiling modern JavaScript features down to versions that can run in older environments`, similar to Babel. It also separates type information from the JavaScript code, allowing the code to be runnable in JS environments while still benefiting TypeScript users.
