@@ -7,6 +7,7 @@ TypeScript is an open source project maintained by Microsoft, `represents a synt
 > It indeed works at build time.
 
 Course link: https://www.typescript-training.com/course/fundamentals-v4
+Course repo: ```git clone https://github.com/mike-north/typescript-courses```
 
 ### 1.1.2 - Three parts of TypeScript
 
