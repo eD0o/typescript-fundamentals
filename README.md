@@ -25,5 +25,61 @@ Inside the repo, navigate to `packages/welcome-to-ts`. The key files here includ
 
 - TypeScript provides `flexibility by compiling modern JavaScript features down to versions that can run in older environments`, similar to Babel. It also separates type information from the JavaScript code, allowing the code to be runnable in JS environments while still benefiting TypeScript users.
 
-
 ## 2.2 - Variable Declarations and Inference
+
+### 2.2.1 - Inference
+
+TypeScript can automatically `infer types based on the assigned value` during variable declaration.
+
+```ts
+let temperature = 6; // inferred as type number
+```
+
+### 2.2.2 - Type Checking
+
+TypeScript enforces type-checking to `ensure values assigned to variables to match` the expected type.
+
+```ts
+temperature = "warm"; // error: Type '"warm"' is not assignable to type 'number'
+```
+
+### 2.2.3 - Literal Types
+
+You can define a variable with a literal type, `restricting it to a specific value`.
+
+```ts
+// most common and useful option when you know the value will not change.
+const humidity = 79; // humidity's type is literally 79
+humidity = 78; // error: Type '78' is not assignable to type '79'
+```
+
+### 2.2.4 - Type Compatibility
+
+When assigning one variable to another, TypeScript checks if the values are compatible.
+
+```ts
+let temp2 = 19; // type: number
+let humid2 = 79 as const; // type: 79 (literal)
+temp2 = humid2; // allowed, since 79 is a number
+humid2 = temp2; // error: cannot assign a general number to a literal type
+```
+
+> Using `as const ensures a variable's type is treated as a literal`, preventing it from being changed to another value.
+
+Trivia[^bignote]
+[^bignote]: In TypeScript, `let temperature = 79 as 79`; creates a let variable with a literal type (79), meaning it can only hold the value 79. `Although it is reassignable, it can only be reassigned to 79, making it function similarly to a const but still technically a let.`
+
+Now considering the examples:
+
+```ts
+const temperature = 79;
+let temperature = 79 as const;
+let temperature = 79 as 79;
+```
+
+_let temperature = 79_ as const or _let temperature = 79 as 79_ `would only be useful if you need reassignability (though limited to the same value)`, but that’s a very niche scenario.
+
+_const temperature = 79_ is the most useful in most cases because:
+
+- It's `simpler` and more concise.
+- It `communicates clearly that the value will not change`, which aligns with best practices of immutability.
