@@ -66,8 +66,9 @@ humid2 = temp2; // error: cannot assign a general number to a literal type
 
 > Using `as const ensures a variable's type is treated as a literal`, preventing it from being changed to another value.
 
-Trivia[^bignote]
-[^bignote]: In TypeScript, `let temperature = 79 as 79`; creates a let variable with a literal type (79), meaning it can only hold the value 79. `Although it is reassignable, it can only be reassigned to 79, making it function similarly to a const but still technically a let.`
+### 2.2.5 - Trivia
+
+In TypeScript, `let temperature = 79 as 79`; creates a let variable with a literal type (79), meaning it can only hold the value 79. `Although it is reassignable, it can only be reassigned to 79, making it function similarly to a const but still technically a let.`
 
 Now considering the examples:
 
