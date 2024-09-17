@@ -24,3 +24,6 @@ Inside the repo, navigate to `packages/welcome-to-ts`. The key files here includ
 - Module resolution is the mechanism by which TypeScript finds the files referenced in imports. The `Node option is the most common setting, searching for modules in node_modules` and using relative paths.
 
 - TypeScript provides `flexibility by compiling modern JavaScript features down to versions that can run in older environments`, similar to Babel. It also separates type information from the JavaScript code, allowing the code to be runnable in JS environments while still benefiting TypeScript users.
+
+
+## 2.2 - Variable Declarations and Inference
