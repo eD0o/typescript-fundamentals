@@ -86,3 +86,66 @@ _const temperature = 79_ is the most useful in most cases because:
 - It `communicates clearly that the value will not change`, which aligns with best practices of immutability.
 
 ## 2.3 - Any & Type Casting
+
+### 2.3.1 - Implicit any and type annotations
+
+Variables `without an initial value default to any, allowing any type to be assigned later`, which can cause bugs.
+
+```ts
+export const RANDOM_WAIT_TIME = Math.round(Math.random() * 500) + 500;
+
+let startTime = new Date();
+let endTime; // Has 'any' as it's not initialized
+
+setTimeout(() => {
+  endTime = 0; // Valid due to 'any'
+  endTime = new Date(); // Still valid
+}, RANDOM_WAIT_TIME);
+```
+
+With type annotations, it's `not necessary to initialize the variable later` to avoid any:
+
+```ts
+export const RANDOM_WAIT_TIME = Math.round(Math.random() * 500) + 500;
+
+let startTime = new Date();
+let endTime: Date; // Explicitly typed as 'Date'
+
+setTimeout(() => {
+  endTime = new Date(); // Only 'Date' allowed, not numbers as the example above.
+}, RANDOM_WAIT_TIME);
+```
+
+### 2.3.2 - Type Casting
+
+Allows you to `override TypeScript's type inference`, but it `should be used carefully` to avoid runtime errors.
+
+Safe Type Casting:
+
+```ts
+let dateDeclaration = new Date("Jan 1, 2012");
+let date1 = dateDeclaration; // Correctly inferred as Date
+let date2 = dateDeclaration as any; // Cast to 'any', but this removes type safety, just use it if really necessary.
+
+const humid3 = 79 as number; // Safe casting, 79 is a valid number
+```
+
+> Observation: `Casting to any is not safe because it bypasses type checking entirely`. This can lead to issues if the variable is later assigned or used incorrectly:
+
+```ts
+date2 = 42; // No error because it's 'any', but this is not a valid Date
+console.log(date2.toISOString()); // 💥 Runtime error: 42 doesn't have 'toISOString'
+```
+
+Unsafe Type Casting:
+
+```ts
+let date3 = "oops" as any as Date; // Double casting from string to Date
+// Besides that, TypeScript thinks this is a Date
+
+date3.toISOString(); // 💥 Runtime error, because 'oops' is not a valid Date
+```
+
+> Potential Issue: Casting "oops" directly as Date can lead to runtime errors when using Date methods.
+
+Summary: Type casting, especially to `any, removes the benefits of type checking` and can lead to runtime errors. `It should only be used with caution.`
