@@ -84,3 +84,5 @@ _const temperature = 79_ is the most useful in most cases because:
 
 - It's `simpler` and more concise.
 - It `communicates clearly that the value will not change`, which aligns with best practices of immutability.
+
+## 2.3 - Any & Type Casting
