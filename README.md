@@ -156,7 +156,7 @@ Summary: Type casting, especially to `any, removes the benefits of type checking
 - Return types ensure consistency and `prevent silent bugs` (e.g., returning undefined).
 
 <details>
-<summary>Click here to see examples</summary>
+<summary>Click here to see some examples</summary>
 
 ```ts
 // Example 1:
