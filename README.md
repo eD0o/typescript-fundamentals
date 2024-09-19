@@ -149,3 +149,66 @@ date3.toISOString(); // 💥 Runtime error, because 'oops' is not a valid Date
 > Potential Issue: Casting "oops" directly as Date can lead to runtime errors when using Date methods.
 
 Summary: Type casting, especially to `any, removes the benefits of type checking` and can lead to runtime errors. `It should only be used with caution.`
+
+## 2.4 - Functions & Return Types
+
+- Adding `type annotations in the function parameters reduces errors` that could arise from any types.
+- Return types ensure consistency and `prevent silent bugs` (e.g., returning undefined).
+
+<details>
+<summary>Examples</summary>
+
+```ts
+// Example 1:
+function add(a, b) {
+  return a + b; // strings? numbers? a mix?
+}
+
+const result = add(3, "4");
+```
+
+```ts
+// Example 2:
+
+//ts will infer that the sum of two numbers will be a number
+function add(a: number, b: number) {
+  return a + b;
+}
+
+// then we will have an error here in the second string argument
+// const result = add(3, "4");
+
+const result = add(3, 4); // -> correct one
+```
+
+```ts
+// Example 3:
+
+// but if you put some more minimal logic in the function:
+function add(a: number, b: number) {
+  if (Math.random() > 5) return a + b;
+}
+
+const result = add(3, 4);
+result.toExponential(); // now it'll warn that maybe the value is undefined because of the conditional
+```
+
+```ts
+// Example 4:
+
+// so, to avoid that, declare the return type since the beginning to avoid delayed warnings
+function add(a: number, b: number): number {
+  if (Math.random() > 5) {
+    return a + b;
+  } else {
+    return 0; // certificate that will return the type
+  }
+}
+
+const result = add(3, 4);
+result.toExponential();
+```
+
+</details>
+
+> Tip: TypeScript focuses on type checking; ESLint covers code style and best practices. The two tools complement each other, and projects like `typescript-eslint` leverage type info for more precise linting.
