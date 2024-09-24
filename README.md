@@ -121,3 +121,25 @@ const phones: { [k: string]: string } = {};
 > However, you can't add values that are of a different type or more complex structures, such as nested objects as in the first scenario.
 
 ## 3.3 - Array Types, Tuples & readonly
+
+### 3.3.1 - Array Types:
+
+Describing types for arrays is often as easy as `adding [] to the end of the array member’s type`. For example the type for an array of strings would look like `string[]`:
+
+```ts
+const fileExtensions: string[] = ["js", "ts"];
+const numberArr: number[] = [1, 2, 3];
+```
+
+> Avoid using `Array<string>` because can cause weird bugs in JSX due to syntax conflicts. Prefer using `string[]`.
+
+### 3.3.2 - Tuples & readonly:
+
+The best way to create `immutable tuples` in TypeScript is by using `readonly`:
+
+```ts
+const tupleExample: readonly [number, number] = [4, 5];
+tupleExample.push(6) // Error: Property 'push' does not exist on type 'readonly [number, number]'.
+```
+
+> It's possible to create mutable tuples as well, but conceptually, this is the best scenario in TypeScript.

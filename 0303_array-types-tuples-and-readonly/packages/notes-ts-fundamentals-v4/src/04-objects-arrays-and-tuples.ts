@@ -17,7 +17,7 @@ let car: {
 
 // printCar(car)
 
-//* Optional properties
+// Optional properties
 //? Insert into function printCar
 // let str = `${car.make} ${car.model} (${car.year})`
 // car.chargeVoltage
@@ -37,7 +37,7 @@ let car: {
 //     chargeVoltage: 220,
 // })
 
-//* Excess property checking
+// Excess property checking
 
 // printCar({
 //     make: "Tesla",
@@ -72,11 +72,10 @@ let car: {
 //   number: ""
 // }
 
-//*  Array Types
+// Array Types
 
-/*
-// const fileExtensions = ["js", "ts"]
-//        ^? string[]
+const fileExtensions: string[] = ["js", "ts"]
+const numberArr: number[] = [1, 2, 3]
 
 // const cars = [ //? Let's look at an array of objects
 //     {
@@ -87,8 +86,7 @@ let car: {
 // ]
 
 
-//* Tuples
-/*
+// Tuples
 // let myCar = [
 //     2002,     // Year
 //     "Toyota", // Make
@@ -97,9 +95,9 @@ let car: {
 // const [year, make, model] = myCar //✔️ Destructuring
 
 //? Inference doesn't work very well for tuples
-/*
+
 // myCar = ["Honda", 2017, "Accord", "Sedan"] //! Wrong convention
-/*
+
 // let myCar: [number, string, string] = [
 //     2002,
 //     "Toyota",
@@ -109,8 +107,8 @@ let car: {
 // myCar = [2017, "Honda", "Accord", "Sedan"] //! Too many elements
 
 
-//*  `readonly` tuples
-/*
+//  `readonly` tuples
+
 // const numPair: [number, number] = [4, 5]; //✔️ Valid
 // const numTriplet: [number, number, number] = [7]; //! Invalid
 
@@ -128,7 +126,5 @@ let car: {
 // roNumPair.length
 // roNumPair.push(6) // [4, 5, 6] //! Not allowed
 // roNumPair.pop() // [4, 5] //! Not allowed
-
-/**/
 
 export default {}
