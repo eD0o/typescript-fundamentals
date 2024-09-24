@@ -119,3 +119,5 @@ const phones: { [k: string]: string } = {};
 ```
 
 > However, you can't add values that are of a different type or more complex structures, such as nested objects as in the first scenario.
+
+## 3.3 - Array Types, Tuples & readonly
