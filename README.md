@@ -143,3 +143,5 @@ tupleExample.push(6) // Error: Property 'push' does not exist on type 'readonly 
 ```
 
 > It's possible to create mutable tuples as well, but conceptually, this is the best scenario in TypeScript.
+
+## 3.4 - Structural vs Nominal Typing
