@@ -155,7 +155,7 @@ public class Car {
 }
 
 Car myCar = new Car();
-CarChecker.checkCar(myCar); // Checks if myCar is a Car instance
+CarChecker.checkCar(myCar); // Checks if myCar is an instance of Car
 ```
 
 - **Structural**: Types are based on structure or shape. Example from TypeScript:
@@ -180,6 +180,27 @@ function printCar(car: { make: string; model: string; year: number }) {
 
 const vehicle = { make: "Honda", model: "Accord", year: 2017 };
 printCar(vehicle); // Works fine, no need for an explicit class
+//As long as the argument has the required properties, printCar accepts it.
 ```
 
 In TypeScript, `compatibility is determined by whether an object has the required properties`, not by its class. For example, `both Car and Truck are compatible with the printCar` function as long as they have the necessary properties.
+
+Also, types can be thought of as sets. For example:
+
+- Set of Vehicles: Includes Car, Truck, etc.
+- Subset: `All instances of Car and Truck fit the criteria of the Vehicle` type, making them subsets of the Vehicle set.
+
+So, when asking:
+
+**“Is type y equivalent to type x?”**
+
+This can be rephrased as:
+
+**“Does the type of y fit within the type of x?”**
+
+In TypeScript, this translates to:
+
+- **“Is type y equivalent to type x?”** 
+  - ⟹ **“Is the set represented by y a subset of the set representing x?”**
+
+`If y extends or derives from x, then all instances of y are also instances of x`, establishing a subset relationship.
