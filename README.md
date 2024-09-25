@@ -139,9 +139,47 @@ The best way to create `immutable tuples` in TypeScript is by using `readonly`:
 
 ```ts
 const tupleExample: readonly [number, number] = [4, 5];
-tupleExample.push(6) // Error: Property 'push' does not exist on type 'readonly [number, number]'.
+tupleExample.push(6); // Error: Property 'push' does not exist on type 'readonly [number, number]'.
 ```
 
 > It's possible to create mutable tuples as well, but conceptually, this is the best scenario in TypeScript.
 
 ## 3.4 - Structural vs Nominal Typing
+
+- **Nominal**: Types are based on explicit names. Example from Java:
+
+```java
+public class Car {
+  String make;
+  String model;
+}
+
+Car myCar = new Car();
+CarChecker.checkCar(myCar); // Checks if myCar is a Car instance
+```
+
+- **Structural**: Types are based on structure or shape. Example from TypeScript:
+
+```ts
+class Car {
+  make: string;
+  model: string;
+  year: number;
+}
+
+class Truck {
+  make: string;
+  model: string;
+  year: number;
+  towingCapacity: number;
+}
+
+function printCar(car: { make: string; model: string; year: number }) {
+  console.log(`${car.make} ${car.model} (${car.year})`);
+}
+
+const vehicle = { make: "Honda", model: "Accord", year: 2017 };
+printCar(vehicle); // Works fine, no need for an explicit class
+```
+
+In TypeScript, `compatibility is determined by whether an object has the required properties`, not by its class. For example, `both Car and Truck are compatible with the printCar` function as long as they have the necessary properties.
