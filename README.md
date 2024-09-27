@@ -30,3 +30,40 @@ When discussing types in TypeScript, it's helpful to think of them as `sets of a
 - Union: Focus on `what values are allowed` in the set.
 - Intersection: `Focus on the guarantees` about each value in the set.
 - With union, a function might not accept all values since they could belong to only one set. `With intersection, you have stricter control, knowing that the value satisfies both` criteria.
+
+## 4.2 - Union Types
+
+Let’s think back to the concept of literal types from an earlier example
+
+```ts
+const humidity = 79 // type is the literal number 79 (literal type)
+```
+
+The type of humidity is `literally 79 rather than a more general type like number`.
+
+Now, `when needed to create an union type that allows only specific literal values`, we can use the | (union) operator. It's possible to give this type a name using the type keyword.
+
+```ts
+// Example 1:
+type OneThroughFive = 1 | 2 | 3 | 4 | 5
+
+let lowNumber: OneThroughFive = 3 // it passes
+
+lowNumber = 8 // Type '8' is not assignable to type 'OneThroughFive'.
+```
+
+```ts
+// Example 2:
+type Evens = 2 | 4 | 6 | 8
+
+let evenNumber: Evens = 2; // it passes
+
+evenNumber = 5; // Type '5' is not assignable to type 'Evens'.
+```
+
+Now the union type with both sets:
+
+```ts
+let evenOrLowNumber = 5 as Evens | OneThroughFive; // it passes
+// let evenOrLowNumber: 2 | 4 | 6 | 8 | 1 | 3 | 5
+```
