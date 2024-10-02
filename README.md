@@ -228,3 +228,5 @@ Example Explanation:
 - This `narrow range of values makes it possible to meet the type-checking requirements` for all four print* functions.
 
 > It is far less common to use intersection types compared to union types. A real-world case where you’ll find an intersection type is Object.assign(a, b)
+
+![](https://www.typescript-training.com/static/f5b98613da631a763ff3d796c9a64c80/26a94/union-intersection.png)
