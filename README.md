@@ -68,7 +68,7 @@ let evenOrLowNumber = 5 as Evens | OneThroughFive; // it passes
 // let evenOrLowNumber: 2 | 4 | 6 | 8 | 1 | 3 | 5
 ```
 
-### 4.3 - Union Type Control Flow
+## 4.3 - Union Type Control Flow
 
 Union types `allow a function or variable to accept multiple types`. For example, a function that can return either of two possible values:
 
@@ -101,7 +101,7 @@ printEvenNumberUnder5(evenOrLowNumber); //❌ Not guaranteed to be in {2, 4}
 printNumber(evenOrLowNumber); //✔️ Guaranteed to be a number
 ```
 
-#### 4.3.1 - Type Guards and Narrowing Examples
+### 4.3.1 - Type Guards and Narrowing Examples
 
 - Type guards are expressions or functions that perform runtime `checks to ensure a variable is of a specific type`. These checks allow TypeScript to "narrow" the type of a variable `from a broad or union type to a more specific type`. In other words, type guards help `refine or narrow down the possible types of a value` within a particular block of code, making it safer and easier to work with specific types.
 
@@ -197,3 +197,34 @@ if (first === "error") {
   };
 }
 ```
+
+## 4.4 - Intersection Types
+
+Intersection types in TypeScript can be described using the `& `(ampersand) operator.
+
+Essentially, `& means “anything that is in both sets”` in terms of the allowed values or proeperties. An intersection type allows a variable to `have all the properties and behaviors of the intersected types, combining them into a new type`.
+
+
+```ts
+//? What does Evens & OneThroughFive accept as values?
+let evenAndLowNumber: Evens & OneThroughFive;
+evenAndLowNumber = 6 //! Not in OneThroughFive
+evenAndLowNumber = 3 //! Not in Evens
+evenAndLowNumber = 4 //✔️ In both sets
+
+// ? What requirements can `Evens & OneThroughFive` meet?
+let y = 4 as Evens & OneThroughFive;
+
+printEven(y) //✔️ Guaranteed to be even
+printLowNumber(y) //✔️ Guaranteed to be in {1, 2, 3, 4, 5}
+printEvenNumberUnder5(y) //✔️ Guaranteed to be in {2, 4}
+printNumber(y) //✔️ Guaranteed to be a number
+```
+
+Example Explanation: 
+
+- The intersection type Evens & OneThroughFive can `only accept values that exist in both types, which narrows the range` of allowed values.
+- In this case, only 4 is allowed because it's both an even number and within the range of OneThroughFive (1-5).
+- This `narrow range of values makes it possible to meet the type-checking requirements` for all four print* functions.
+
+> It is far less common to use intersection types compared to union types. A real-world case where you’ll find an intersection type is Object.assign(a, b)
