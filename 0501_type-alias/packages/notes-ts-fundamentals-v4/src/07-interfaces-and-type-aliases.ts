@@ -1,9 +1,9 @@
-//* Type Aliases
+// Type Aliases
 type Amount = {
   currency: string
   value: number
 }
-/*
+//
 // function printAmount(amt: Amount) {
 //     console.log(amt)
 
@@ -21,7 +21,7 @@ type Amount = {
 
 
 //? Let's look at a familiar example from the last chapter
-/*
+//
 // function flipCoin() {
 //     if (Math.random() > 0.5) return "heads"
 //     return "tails"
@@ -41,7 +41,7 @@ type Amount = {
 // }
 
 //? Let's model the return type as an interface
-/*
+//
 // type UserInfoOutcomeError = readonly ["error", Error]
 // type UserInfoOutcomeSuccess = readonly [
 //     "success",
@@ -52,22 +52,21 @@ type Amount = {
 //     | UserInfoOutcomeSuccess
 
 
-//* Inheritance in type aliases
-/*
-// type SpecialDate = Date & { getDescription(): string }
+/// Inheritance in type aliases
+//
+type SpecialDate = Date & { getDescription(): string }
 
-// const newYearsEve: SpecialDate
-//     //                    ^?
-//     = Object.assign(
-//         new Date(),
-//         { getDescription: () => "Last day of the year" }
-//     )
+const newYearsEve: SpecialDate
+    = Object.assign(
+        new Date(),
+        { getDescription: () => "Last day of the year" }
+    )
 
-// newYearsEve.getDescription
+newYearsEve.getDescription()
 // //             ^?
 
-//* Interfaces
-/*
+/// Interfaces
+//
 // interface Amount2 {
 //     currency: string
 //     value: number
@@ -77,8 +76,8 @@ type Amount = {
 //     amt
 // }
 
-//* Inheritance in interfaces
-/*
+/// Inheritance in interfaces
+//
 // //? `extends` keyword
 // function consumeFood(arg) { }
 
@@ -97,7 +96,7 @@ type Amount = {
 // c.eat
 // c.meow()
 
-/*
+//
 // interface Animal {
 //     isAlive(): boolean
 // }
@@ -115,7 +114,7 @@ type Amount = {
 
 
 //? `implements` keyword
-/*
+//
 // interface AnimalLike {
 //     eat(food): void
 // }
@@ -125,7 +124,7 @@ type Amount = {
 //         return "woof"
 //     }
 // }
-/*
+//
 // class LivingOrganism { //? A base class
 //     isAlive() {
 //         return true
@@ -146,7 +145,7 @@ type Amount = {
 // }
 
 //? Implements sometimes works with type aliases
-/*
+//
 // type CanJump = {
 //     jumpToHeight(): number
 //         // | [number, number]
@@ -166,27 +165,27 @@ type Amount = {
 //       bark(): string
 //     }
 
-//* Open interfaces
+/// Open interfaces
 
-/*
+//
 // function feed(animal: AnimalLike) {
 //     animal.eat
 //     animal.isAlive
 // }
-/*
+//
 // interface AnimalLike { //✔️ Additional declaration is OK
 //     isAlive(): boolean
 // }
 
-//* Use case: augmenting existing types
+/// Use case: augmenting existing types
 
-/*
+//
 // window.document // an existing property
 // //      ^? (property) document: Document
 // window.exampleProperty = 42
 // //      ^? (property) exampleProperty: number
 
-/*
+//
 //// tells TS that `exampleProperty` exists
 // declare global {
 //     interface Window {
@@ -194,16 +193,16 @@ type Amount = {
 //     }
 // }
 
-//* Recursive types
-/*
+/// Recursive types
+//
 // type NestedNumbers = number | NestedNumbers[]
  
 // const val: NestedNumbers = [3, 4, [5, 6, [7], 59], 221]
-/*
+//
 // if (typeof val !== "number") {
 //   val.push(41)
 //   val.push("this will not work") //! No strings allowed
 // }
 
-/**/
+///
 export default {}

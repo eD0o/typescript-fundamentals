@@ -19,25 +19,30 @@
 
 
 // //? Control flow sometimes results in union types
-// function flipCoin(): "heads" | "tails" {
-//     if (Math.random() > 0.5) return "heads"
-//     return "tails"
-// }
+
 
 // const outcome = flipCoin()
 // //     ^? "heads" | "tails"
 // //? A more complicated example
 
+// function flipCoin(): "heads" | "tails" {
+//   if (Math.random() > 0.5) return "heads"
+//   return "tails"
+// }
 // const success = ["success", { name: "Mike North", email: "mike@example.com" }] as const
 // const fail = ["error", new Error("Something went wrong!")] as const
 
-// function maybeGetUserInfo() {
-//     if (flipCoin() === "heads") {
-//         return success
-//     } else {
-//         return fail
-//     }
+// function maybeGetUserInfo(): readonly ["success", {
+//   readonly name: "Mike North";
+//   readonly email: "mike@example.com";
+// }] | readonly ["error", Error] {
+//   if (flipCoin() === "heads") {
+//     return success
+//   } else {
+//     return fail
+//   }
 // }
+
 
 // const outcome2 = maybeGetUserInfo()
 
