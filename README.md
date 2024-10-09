@@ -104,3 +104,127 @@ While `there’s no true extends keyword` that can be used when defining type al
 
 Thus, you `can use both methods` from Date as well from Object.assign.
 
+## 5.2 - Interfaces, extends & implements
+
+An interface is `a way of defining an object type`.
+
+> Not to be confused with a type called object, which will be explained later.
+
+An object type is anything that looks like this:
+
+```ts
+{
+  field: "value";
+}
+```
+
+As seen in the previous chapter, it may be a type alias:
+
+```ts
+type Amount = {
+  currency: string;
+  value: number;
+};
+```
+
+> string | number is an example of something that cannot be described using an object type, because it makes use of the union type operator.
+
+```ts
+// you can't create a union type in na interface
+interface Amount = {
+  currency: string;
+  value: number;
+}; | string
+```
+
+### 5.2.1 - extends
+
+Just as in in JavaScript, a subclass `extends from a base class`.
+
+> It's not possible to have a multiple inheritance in classes using extends.
+
+```ts
+function consumeFood(arg: string) {}
+class AnimalThatEats {
+  eat(food: string) {
+    consumeFood(food);
+  }
+}
+class Cat extends AnimalThatEats {
+  meow() {
+    return "meow";
+  }
+}
+
+const c = new Cat();
+c.eat();
+c.meow();
+```
+
+Additionally a `“sub-interface” extends from a base interface`.
+
+```ts
+interface Animal {
+  isAlive(): boolean;
+}
+interface Mammal extends Animal {
+  getFurOrHairColor(): string;
+}
+interface Hamster extends Mammal {
+  squeak(): string;
+}
+function careForHamster(h: Hamster) {
+  h.getFurOrHairColor();
+  h.squeak();
+}
+```
+
+### 5.2.2 - implements
+
+TypeScript adds `another clause called that can be used to state that a given class should produce instances` that confirm to a given interface.
+
+```ts
+interface AnimalLike {
+  eat(food): void;
+}
+
+class Dog implements AnimalLike {
+  //   ^
+  //Class 'Dog' incorrectly implements interface 'AnimalLike'.
+  //Property 'eat' is missing in type 'Dog' but required in type 'AnimalLike'.
+  bark() {
+    return "woof";
+  }
+}
+```
+
+In the example above, we can see that TypeScript `is objecting to us failing to add an eat()` method to our Dog class. Without this method, instances of Dog do not conform to the AnimalLike interface.
+
+Let’s update it:
+
+```ts
+interface AnimalLike {
+  eat(food): void;
+}
+
+class Dog implements AnimalLike {
+  bark() {
+    return "woof";
+  }
+  eat(food) {
+    consumeFood(food);
+  }
+}
+```
+
+It's `possible to extends many interfaces in one`:
+
+```ts
+interface CanBark {
+  bark(): string;
+}
+
+interface DogLike extends Animal, AnimalLike, CanBark {}
+
+class Dog2 extends LivingOrganism implements DogLike {}
+```
