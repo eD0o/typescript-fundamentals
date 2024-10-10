@@ -231,3 +231,68 @@ class Dog2 extends LivingOrganism implements DogLike {}
 
 ## 5.3 - Open Interfaces
 
+`Unlike in type aliases, you can have multiple interface declarations` in the same scope:
+
+```ts
+interface AnimalLike {
+  // From before
+  eat(food): void;
+}
+function feed(animal: AnimalLike) {
+  animal.eat(food);
+
+  animal.isAlive(); // with the second declaration above, this will become valid
+}
+
+// SECOND DECLARATION OF THE SAME NAME
+interface AnimalLike {
+  isAlive(): boolean;
+}
+```
+
+Interfaces in TypeScript can be declared multiple times, and `each declaration is merged to form a single type`. 
+
+```ts
+// Original library declaration
+interface User {
+  name: string;
+}
+
+// Extending the User interface to add more properties
+interface User {
+  age: number;
+}
+
+// Now you can create a user object with both properties
+const newUser: User = {
+  name: 'John',
+  age: 30
+};
+```
+
+This allows extending interfaces incrementally, particularly `useful for augmenting types provided by libraries or the global environment`.
+
+Imagine a situation where you want to add a global property to the window object:
+
+```ts
+window.document; // an existing property
+
+window.exampleProperty = 42;
+
+// tells TS that `exampleProperty` exists
+declare global {
+  interface Window {
+    exampleProperty: number;
+  }
+}
+```
+
+What we have done here is `augment an existing Window interface` that TypeScript has set up for us behind the scene.
+
+Choosing whether to use type or interface:
+
+In many situations, either a type alias or an interface would be perfectly fine, however…
+
+1 - If you need to `define something other than an object type` (e.g., use of the | union type operator), you must `use a type alias`.
+2 - If you need to `define a type to use with the implements heritage term on a class, use an interface`.
+3 - If you need to `allow consumers of your types to augment them, you must use an interface`.
