@@ -228,3 +228,6 @@ interface DogLike extends Animal, AnimalLike, CanBark {}
 
 class Dog2 extends LivingOrganism implements DogLike {}
 ```
+
+## 5.3 - Open Interfaces
+
