@@ -250,7 +250,7 @@ interface AnimalLike {
 }
 ```
 
-Interfaces in TypeScript can be declared multiple times, and `each declaration is merged to form a single type`. 
+Interfaces in TypeScript can be declared multiple times, and `each declaration is merged to form a single type`.
 
 ```ts
 // Original library declaration
@@ -265,8 +265,8 @@ interface User {
 
 // Now you can create a user object with both properties
 const newUser: User = {
-  name: 'John',
-  age: 30
+  name: "John",
+  age: 30,
 };
 ```
 
@@ -296,3 +296,26 @@ In many situations, either a type alias or an interface would be perfectly fine,
 1 - If you need to `define something other than an object type` (e.g., use of the | union type operator), you must `use a type alias`.
 2 - If you need to `define a type to use with the implements heritage term on a class, use an interface`.
 3 - If you need to `allow consumers of your types to augment them, you must use an interface`.
+
+## 5.4 - Recursive Types
+
+Recursive types, are self-referential, and are often `used to describe infinitely nestable types (like trees, JSON objects, or infinitely nestable arrays)`. For example, consider infinitely nestable arrays of numbers:
+
+```ts
+[3, 4, [5, 6, [7], 59], 221];
+```
+
+> You may read or see things that indicate you must use a combination of interface and type for recursive types. As of TypeScript 3.7 this is now much easier, and works with either type aliases or interfaces:
+
+```ts
+type NestedNumbers = number | NestedNumbers[];
+
+const val: NestedNumbers = [3, 4, [5, 6, [7], 59], 221];
+
+if (typeof val !== "number") {
+  val.push(41);
+  val.push("this will not work"); // Error: Type 'string' is not assignable to type 'number'.
+}
+```
+
+This example show how `TypeScript handles deeply nested structures while ensuring type safety`.
