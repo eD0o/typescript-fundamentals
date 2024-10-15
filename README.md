@@ -103,3 +103,6 @@ let carProperty: Car["color" | "year"];
   }
 */
 ```
+
+## 6.2 - Type Registry Pattern
+
