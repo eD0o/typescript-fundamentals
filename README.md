@@ -204,3 +204,82 @@ const subtract: TwoNumberCalc = (x, y) => x - y
 - Because the functions add and subtract are typed using an interface or type alias, `there's no need to provide type annotations for the arguments or the return` type directly in the function definition.
 
 > This interface cannot be "implemented" in the usual sense like a class, as it only describes the function signature, not an object structure.
+
+## 6.4 - void Type
+
+void is a special type used to describe function return values when `no value is returned`. The `return value of a void-returning function is intended to be ignored` by the caller.
+
+void `serves as a clear indicator that you should not expect anything from this function`, focusing on actions rather than returning a value. It's especially useful in functions that perform side effects or callbacks, `ensuring that the developer doesn't mistakenly expect a meaningful return value where none is provided`.
+
+While we could type functions as returning undefined, there are key differences that explain the purpose of void:
+
+```ts
+function invokeInFourSeconds(callback: () => undefined) {
+  setTimeout(callback, 4000)
+}
+function invokeInFiveSeconds(callback: () => void) {
+  setTimeout(callback, 5000)
+}
+ 
+const values: number[] = []
+invokeInFourSeconds(() => values.push(4)) // Type 'number' is not assignable to type 'undefined'.
+invokeInFiveSeconds(() => values.push(4)) // ok
+```
+
+In the first example, Array.prototype.push returns a number (the new length of the array). Because invokeInFourSeconds expects the callback to return undefined, it throws an error when push returns a number. 
+
+In contrast, `invokeInFiveSeconds expects a void return, meaning it doesn't care what the function returns, so the call succeeds`.
+
+Other useful cases:
+
+- Logging:
+
+```ts
+function logError(message: string): void {
+  console.error(message);
+}
+```
+
+- Event Handlers:
+
+```ts
+function handleButtonClick(event: MouseEvent): void {
+  console.log('Button was clicked');
+  // Perform other actions, but no meaningful value is returned
+}
+
+const button = document.querySelector('button');
+if (button) {
+  button.addEventListener('click', handleButtonClick);
+}
+```
+
+- Callbacks in Asynchronous Functions:
+
+```ts
+function executeAfterDelay(callback: () => void, ms: number): void {
+  setTimeout(callback, ms);
+}
+
+executeAfterDelay(() => {
+  console.log('Delayed execution');
+}, 2000);
+```
+
+- Side Effects: 
+
+```ts
+function sendAnalytics(data: any): void {
+  // Send data to analytics server, but nothing is returned
+  fetch('/analytics', { method: 'POST', body: JSON.stringify(data) });
+}
+```
+
+- Void in Asynchronous Functions:
+
+```ts
+async function notifyUser(): Promise<void> {
+  await sendNotification('Your order has been shipped');
+  // Nothing is returned, just a side effect of sending a notification
+}
+```
