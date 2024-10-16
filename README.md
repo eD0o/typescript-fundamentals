@@ -44,16 +44,15 @@ keyof = is used to retrieve the keys of an object or type. It works `similarly t
 
 typeof = is used to `get the type of a value or variable at compile time`. It allows TypeScript to infer the type of a variable or object, which can then be used elsewhere in your type annotations.
 
-
 ```ts
 const contact = {
   name: "Ashley",
   email: "ashley@example.com",
 };
 
-type WhatIWant = "name" | "email"
+type WhatIWant = "name" | "email";
 // keyof extracts the keys from the contact object.
-type Try1 = keyof typeof contact
+type Try1 = keyof typeof contact;
 // type Try1 = "name" | "email"
 ```
 
@@ -106,3 +105,102 @@ let carProperty: Car["color" | "year"];
 
 ## 6.2 - Type Registry Pattern
 
+This is called a module declaration, and it allows us to effectively layer types on top of things already exported by a module ./lib/registry.ts. Remember, `there’s only one definition of the types exported by ./lib/registry.ts, so if we modify them using a module declaration, that modification will affect every place` where its types are used.
+
+Now, let’s use keyof, module declarations and what we just learned about open interfaces to solve a problem.
+
+Imagine we’re building a data library for a web applications. Part of this task involves building a function that fetches different types of records from a user’s API. We want to `be able to retrieve a record by the name of the kind of record and its ID`, but as the builders of the library, we don’t know the specific types that any given user will need.
+
+```ts
+// Assumption -- our user has set up resources like Book and Magazine
+//
+// returns a Book
+fetchRecord("book", "bk_123");
+// returns a Magazine
+fetchRecord("magazine", "mz_456");
+// maybe should refuse to compile
+fetchRecord("blah", "");
+```
+
+Our project might have a file structure like:
+
+```
+data/
+  book.ts       // A model for Book records
+  magazine.ts   // A model for Magazine records
+lib/
+  registry.ts   // Our type registry, and a `fetchRecord` function
+index.ts        // Entry point
+```
+
+Let’s focus on that first argument of the fetchRecord function. We can create a `“registry” interface that any consumer of this library can use to “install” their resource types`, and define the fetchRecord function using our new keyof type query.
+
+```ts
+// lib/registry.ts
+export interface DataTypeRegistry {
+  // empty by design
+}
+// the "& string" is just a trick to get
+// a nicer tooltip to show you in the next step
+export function fetchRecord(arg: keyof DataTypeRegistry & string, id: string) {}
+```
+
+Now let’s focus our attention toward “app code”. We’ll define classes for Book and Magazine and “register” them with the DataTypeRegistry interface
+
+```ts
+export class Book {
+  deweyDecimalNumber(): number {
+    return 42;
+  }
+}
+declare module "../lib/registry" {
+  export interface DataTypeRegistry {
+    book: Book;
+  }
+}
+
+// @filename: data/magazine.ts
+export class Magazine {
+  issueNumber(): number {
+    return 42;
+  }
+}
+
+declare module "../lib/registry" {
+  export interface DataTypeRegistry {
+    magazine: Magazine;
+  }
+}
+```
+
+Now look what happens to the first argument of that fetchRecord function! it’s "book" | "magazine" despite the library having absolutely nothing in its code that refers to these concepts by name!
+
+```ts
+// @filename: index.ts
+import { DataTypeRegistry, fetchRecord } from "./lib/registry";
+
+fetchRecord("book", "bk_123");
+```
+
+Obviously there are other things we’d need to build other parts of what we’d need for a fetchRecord function. Don’t worry! We’ll come back once we’ve learned a few more things that we need.
+
+## 6.3 - Callables
+
+Both type aliases and interfaces offer the `capability to describe call signatures`:
+
+```ts
+interface TwoNumberCalculation {
+  (x: number, y: number): number
+}
+ 
+type TwoNumberCalc = (x: number, y: number) => number
+ 
+const add: TwoNumberCalculation = (a, b) => a + b
+                                  
+const subtract: TwoNumberCalc = (x, y) => x - y
+```
+
+- The return type for both the interface and the type alias is number, though the `syntax differs (:number in the interface and => number in the type alias)`.
+- Because the functions add and subtract are typed using an interface or type alias, `there's no need to provide type annotations for the arguments or the return` type directly in the function definition.
+
+> This interface cannot be "implemented" in the usual sense like a class, as it only describes the function signature, not an object structure.
