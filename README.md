@@ -190,14 +190,14 @@ Both type aliases and interfaces offer the `capability to describe call signatur
 
 ```ts
 interface TwoNumberCalculation {
-  (x: number, y: number): number
+  (x: number, y: number): number;
 }
- 
-type TwoNumberCalc = (x: number, y: number) => number
- 
-const add: TwoNumberCalculation = (a, b) => a + b
-                                  
-const subtract: TwoNumberCalc = (x, y) => x - y
+
+type TwoNumberCalc = (x: number, y: number) => number;
+
+const add: TwoNumberCalculation = (a, b) => a + b;
+
+const subtract: TwoNumberCalc = (x, y) => x - y;
 ```
 
 - The return type for both the interface and the type alias is number, though the `syntax differs (:number in the interface and => number in the type alias)`.
@@ -215,18 +215,18 @@ While we could type functions as returning undefined, there are key differences 
 
 ```ts
 function invokeInFourSeconds(callback: () => undefined) {
-  setTimeout(callback, 4000)
+  setTimeout(callback, 4000);
 }
 function invokeInFiveSeconds(callback: () => void) {
-  setTimeout(callback, 5000)
+  setTimeout(callback, 5000);
 }
- 
-const values: number[] = []
-invokeInFourSeconds(() => values.push(4)) // Type 'number' is not assignable to type 'undefined'.
-invokeInFiveSeconds(() => values.push(4)) // ok
+
+const values: number[] = [];
+invokeInFourSeconds(() => values.push(4)); // Type 'number' is not assignable to type 'undefined'.
+invokeInFiveSeconds(() => values.push(4)); // ok
 ```
 
-In the first example, Array.prototype.push returns a number (the new length of the array). Because invokeInFourSeconds expects the callback to return undefined, it throws an error when push returns a number. 
+In the first example, Array.prototype.push returns a number (the new length of the array). Because invokeInFourSeconds expects the callback to return undefined, it throws an error when push returns a number.
 
 In contrast, `invokeInFiveSeconds expects a void return, meaning it doesn't care what the function returns, so the call succeeds`.
 
@@ -244,13 +244,13 @@ function logError(message: string): void {
 
 ```ts
 function handleButtonClick(event: MouseEvent): void {
-  console.log('Button was clicked');
+  console.log("Button was clicked");
   // Perform other actions, but no meaningful value is returned
 }
 
-const button = document.querySelector('button');
+const button = document.querySelector("button");
 if (button) {
-  button.addEventListener('click', handleButtonClick);
+  button.addEventListener("click", handleButtonClick);
 }
 ```
 
@@ -262,16 +262,16 @@ function executeAfterDelay(callback: () => void, ms: number): void {
 }
 
 executeAfterDelay(() => {
-  console.log('Delayed execution');
+  console.log("Delayed execution");
 }, 2000);
 ```
 
-- Side Effects: 
+- Side Effects:
 
 ```ts
 function sendAnalytics(data: any): void {
   // Send data to analytics server, but nothing is returned
-  fetch('/analytics', { method: 'POST', body: JSON.stringify(data) });
+  fetch("/analytics", { method: "POST", body: JSON.stringify(data) });
 }
 ```
 
@@ -279,10 +279,50 @@ function sendAnalytics(data: any): void {
 
 ```ts
 async function notifyUser(): Promise<void> {
-  await sendNotification('Your order has been shipped');
+  await sendNotification("Your order has been shipped");
   // Nothing is returned, just a side effect of sending a notification
 }
 ```
 
 ## 6.5 - Constructables & Function Overloads
+
+### 6.5.1 - Construct signatures
+
+Construct signatures are `similar to call signatures, except they describe what should happen with the new keyword` is used in an instantiation scenario.
+
+```ts
+interface DateConstructor {
+  // the main difference from call signature is the keyword new
+  new (value: number): Date; // used to create an instance (classes)
+}
+
+let MyDateConstructor: DateConstructor = Date;
+const d = new MyDateConstructor(1697923072611);
+```
+
+### 6.5.2 - Function overloads
+
+`Allows you to define multiple signatures for the same function`. This is useful `when a function can be called in different ways, depending on the `types of arguments. Overloads provide better type safety and IntelliSense support.
+
+However, `the actual function implementation is written once, and it handles the logic for all overloads`. The key is to ensure that the function body can accommodate the possible combinations of argument types.
+
+```ts
+// Function overload signatures
+function add(a: number, b: number): number;
+function add(a: string, b: string): string;
+
+// Function implementation that handles both overloads
+function add(a: number | string, b: number | string): number | string {
+  if (typeof a === "number" && typeof b === "number") {
+    return a + b;
+  } else if (typeof a === "string" && typeof b === "string") {
+    return a.concat(b);
+  }
+  throw new Error("Invalid arguments");
+}
+
+// Usage examples:
+console.log(add(10, 20)); // Outputs: 30
+console.log(add("Hello, ", "World!")); // Outputs: "Hello, World!"
+```
 
