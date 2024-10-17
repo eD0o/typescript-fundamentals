@@ -283,3 +283,6 @@ async function notifyUser(): Promise<void> {
   // Nothing is returned, just a side effect of sending a notification
 }
 ```
+
+## 6.5 - Constructables & Function Overloads
+
