@@ -376,6 +376,7 @@ boundHandler(new Event("click")); // Works fine
 
 myClickHandler.call(myButton, new Event("click")); // Also works
 ```
+
 Key points:
 
 - `.bind creates a new function where this is permanently set` to the provided value (myButton in this case).
@@ -385,3 +386,67 @@ Key points:
 
 ## 6.7 - Explict Function Return Types
 
+TypeScript is capable of inferring function return types quite effectively. However, `relying on inferring can lead to unintentional unexpected type changes when modifications are made`, affecting type safety across the codebase.
+
+```ts
+export async function getData(url: string) {
+  const resp = await fetch(url);
+  const data = (await resp.json()) as { properties: string[] };
+  return data;
+}
+
+function loadData() {
+  getData("https://example.com").then((result) => {
+    console.log(result.properties.join(", "));
+  });
+}
+```
+
+In this case, TypeScript correctly infers the return type. However, making a seemingly innocent change can introduce issues:
+
+```diff
+export async function getData(url: string) {
+  const resp = await fetch(url);
++ if (resp.ok) {
+    const data = await resp.json();
+    return data;
++ }
+}
+```
+
+Here, we introduced a conditional return (if (resp.ok)), which `may result in undefined being returned if resp.ok is false`. This creates a potential error:
+
+```ts
+'result' is possibly 'undefined'.
+```
+
+By `explicitly defining return types, we can catch these errors earlier, at the function declaration level`, rather than at the invocation site:
+
+```ts
+async function getData(
+  url: string
+): Promise<{ properties: string[] } | undefined> {
+  const resp = await fetch(url);
+  if (resp.ok) {
+    const data = (await resp.json()) as { properties: string[] };
+    return data;
+  }
+  return undefined; // Explicitly returning undefined if not ok
+}
+```
+
+By making `the return type Promise<{ properties: string[] } | undefined>, we surface potential issues earlier`, making it easier to ensure that the function handles all return paths correctly.
+
+An alternative:
+
+At the invocation site (loadData), TypeScript will alert us that result could be undefined, requiring us to `handle this case with optional chaining`:
+
+```ts
+function loadData() {
+  getData("https://example.com").then((result) => {
+    console.log(result?.properties.join(", ")); // Safe use of optional chaining
+  });
+}
+```
+
+Optional chaining (?.) `safely handles cases where result could be undefined`, preventing runtime errors by only accessing properties if result is not undefined.
