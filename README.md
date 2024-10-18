@@ -326,3 +326,4 @@ console.log(add(10, 20)); // Outputs: 30
 console.log(add("Hello, ", "World!")); // Outputs: "Hello, World!"
 ```
 
+## 6.6 - this Types
