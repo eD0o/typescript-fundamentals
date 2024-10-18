@@ -327,3 +327,58 @@ console.log(add("Hello, ", "World!")); // Outputs: "Hello, World!"
 ```
 
 ## 6.6 - this Types
+
+Sometimes, a function strongly depends on `what this will reference at the time it is invoked`. For example, consider the case of a DOM event listener for a button:
+
+```html
+<button onClick="myClickHandler">Click Me!</button>
+```
+
+You might define myClickHandler as follows:
+
+```ts
+function myClickHandler(event: Event) {
+  this.disabled = true; // Problem: this is inferred as any
+}
+```
+
+In this example, `TypeScript infers this as any, which can lead to type safety issues`. If we enable the compilerOptions.noImplicitThis flag in tsconfig.json, TypeScript will raise an error:
+
+```ts
+'this' implicitly has type 'any' because it does not have a type annotation.
+```
+
+The `noImplicitThis flag ensures that this must always have an explicit type, preventing unsafe assumptions` about what this is.
+
+To solve this,` we need to specify the this type explicitly. For instance, we can define this as HTMLButtonElement`:
+
+```ts
+function myClickHandler(this: HTMLButtonElement, event: Event) {
+  this.disabled = true;
+}
+```
+
+Now, TypeScript knows that this refers to an HTMLButtonElement, allowing us to safely access properties like disabled.
+
+However, If we try to directly invoke myClickHandler:
+
+```ts
+myClickHandler(new Event("click"));
+// Error: The 'this' context of type 'void' is not assignable to method's 'this' of type 'HTMLButtonElement'.
+```
+
+`To resolve this issue, we can bind` myClickHandler to the button element, ensuring the correct this is passed:
+
+```ts
+const myButton = document.getElementsByTagName("button")[0];
+const boundHandler = myClickHandler.bind(myButton);
+boundHandler(new Event("click")); // Works fine
+
+myClickHandler.call(myButton, new Event("click")); // Also works
+```
+Key points:
+
+- `.bind creates a new function where this is permanently set` to the provided value (myButton in this case).
+- `.call and .apply immediately invoke the function with a specific this` value passed in.
+
+> TypeScript understands that .bind, .call, and .apply will pass the proper this to the function.
