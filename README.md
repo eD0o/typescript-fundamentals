@@ -382,3 +382,6 @@ Key points:
 - `.call and .apply immediately invoke the function with a specific this` value passed in.
 
 > TypeScript understands that .bind, .call, and .apply will pass the proper this to the function.
+
+## 6.7 - Explict Function Return Types
+
