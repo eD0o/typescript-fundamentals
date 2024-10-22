@@ -85,7 +85,8 @@ Here’s an example of a case where we want to have a counter that increments ea
 ```ts
 class Car {
   static nextSerialNumber = 100; // Static field
-  static generateSerialNumber(): number { // Static method
+  static generateSerialNumber(): number {
+    // Static method
     return this.nextSerialNumber++;
   }
 
@@ -108,7 +109,7 @@ console.log(new Car("Honda", "Accord", 2017));
 console.log(new Car("Toyota", "Camry", 2022));
 // > "Toyota Camry 2022 - #101
 ```
- 
+
 - Static fields (nextSerialNumber) store shared state.
 - Static methods (generateSerialNumber) perform operations on the static fields.
 
@@ -155,3 +156,15 @@ Advantages of Static Members:
 - They allow centralization of logic or data that applies to the entire class, rather than individual instances.
 - They help `reduce redundancy and save memory when many instances of a class share common data` or behavior.
 
+## 7.2 - Access modifier keywords
+
+### 7.2.1 - public, private and protected
+
+TypeScript provides three access modifier keywords, which can be used with class fields and methods, to `describe who should be able to see and use them`.
+
+| keyword   | who can access                                                  |
+| --------- | --------------------------------------------------------------- |
+| public    | Anyone who has access to the scope in which the instance exists |
+| protected | the instance itself, and subclasses                             |
+| private   | only the instance itself                                        |
+|           |
