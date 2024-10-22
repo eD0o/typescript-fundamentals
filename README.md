@@ -162,9 +162,238 @@ Advantages of Static Members:
 
 TypeScript provides three access modifier keywords, which can be used with class fields and methods, to `describe who should be able to see and use them`.
 
-| keyword   | who can access                                                  |
+| keyword   | who can access (`instance` field/method)                        |
 | --------- | --------------------------------------------------------------- |
-| public    | Anyone who has access to the scope in which the instance exists |
+| public    | anyone who has access to the scope in which the instance exists |
 | protected | the instance itself, and subclasses                             |
 | private   | only the instance itself                                        |
-|           |
+
+| keyword   | who can access (`static` field/method)                       |
+| --------- | ------------------------------------------------------------ |
+| public    | anyone who has access to the scope in which the class exists |
+| protected | static and instance scopes of the class and its subclasses   |
+| private   | static scope instance scopes of the class only               |
+
+<details>
+<summary>Instance example</summary>
+
+```tsx
+class Car {
+  // Static stuff
+  static nextSerialNumber: number;
+  static generateSerialNumber() {
+    return this.nextSerialNumber++;
+  }
+  static {
+    // `this` is the static scope
+    fetch("https://api.example.com/vin_number_data")
+      .then((response) => response.json())
+      .then((data) => {
+        this.nextSerialNumber = data.mostRecentInvoiceId + 1;
+      });
+  }
+  // Instance stuff
+  make: string;
+  model: string;
+  year: number;
+  private _serialNumber = Car.generateSerialNumber();
+  protected get serialNumber() {
+    return this._serialNumber;
+  }
+  constructor(make: string, model: string, year: number) {
+    this.make = make;
+    this.model = model;
+    this.year = year;
+  }
+}
+
+class Sedan extends Car {
+  getSedanInformation() {
+    this._serialNumber; // Error: Property '_serialNumber' is private and only accessible within class 'Car'.
+    const { make, model, year, serialNumber } = this;
+    return { make, model, year, serialNumber };
+  }
+}
+
+const s = new Sedan("Nissan", "Altima", 2020);
+s.serialNumber; // Error: Property 'serialNumber' is protected and only accessible within class 'Car' and its subclasses.
+```
+
+A couple of things to note in the example above:
+
+- The top-level scope doesn’t have the ability to read serialNumber anymore.
+- Sedan doesn’t have direct access to write \_serialNumber, but it read it through the protected getter serialNumber.
+- Car can expose private functionality by defining its own protected functionality (the serialNumber getter).
+- Sedan can expose protected functionality by defining its own public functionality (the getSedanInformation() return value).
+
+</details>
+
+<details>
+<summary>Static example</summary>
+
+```tsx
+class Car {
+  // Static stuff
+  private static nextSerialNumber: number;
+  private static generateSerialNumber() {
+    return this.nextSerialNumber++;
+  }
+  static {
+    // `this` is the static scope
+    fetch("https://api.example.com/vin_number_data")
+      .then((response) => response.json())
+      .then((data) => {
+        this.nextSerialNumber = data.mostRecentInvoiceId + 1;
+      });
+  }
+  // Instance stuff
+  make: string;
+  model: string;
+  year: number;
+  private _serialNumber = Car.generateSerialNumber();
+  protected get serialNumber() {
+    return this._serialNumber;
+  }
+  constructor(make: string, model: string, year: number) {
+    this.make = make;
+    this.model = model;
+    this.year = year;
+  }
+}
+
+class Sedan extends Car {
+  getSedanInformation() {
+    Car.generateSerialNumber(); // Error: Property 'generateSerialNumber' is private and only accessible within class 'Car'.
+    const { make, model, year, serialNumber } = this;
+    return { make, model, year, serialNumber };
+  }
+}
+```
+
+> static scopes and instance scopes have some degree of visibility. protected static fields are accessible in the class’ static and instance scopes — as well as static and instance scopes of any subclasses.
+
+</details>
+
+> `Not for secret-keeping or security`: It is important to understand that, just like any other aspect of type information, access modifier keywords are only validated at compile time, with `no real privacy or security benefits at runtime`. This means that even if we mark something as private, `if a user decides to set a breakpoint and inspect the code that’s executing at runtime, they’ll still be able to see everything`.
+
+### 7.2.2 - JS private #fields
+
+As of TypeScript 3.8, TypeScript supports use of ECMAScript private class fields. If you have trouble getting this to work in your codebase, make sure to double-check your Babel settings.
+
+```ts
+class Car {
+  private static nextSerialNumber: number;
+  private static generateSerialNumber() {
+    return this.nextSerialNumber++;
+  }
+
+  make: string;
+  model: string;
+  year: number;
+  #serialNumber = Car.generateSerialNumber();
+
+  constructor(make: string, model: string, year: number) {
+    this.make = make;
+    this.model = model;
+    this.year = year;
+  }
+}
+const c = new Car("Honda", "Accord", 2017);
+c.#serialNumber; // Error: Property '#serialNumber' is not accessible outside class 'Car' because it has a private identifier.
+```
+
+Unlike TypeScript’s private keyword, `these are truly private fields, which cannot be easily accessed at runtime`. It’s important to remember, particularly if you’re writing client side code, that `there are still ways of accessing private field data through things like the Chrome Dev Tools protocol`.
+
+Use this as an `encapsulation tool, not as a security construct`. The implementation of JS private fields is also mutually exclusive with properly-behaving ES proxies, which you may not care about directly, but it’s possible that libraries you rely on use them.
+
+TypeScript 5 supports static private #fields:
+
+```ts
+class Car {
+  static #nextSerialNumber: number;
+  static #generateSerialNumber() {
+    return this.#nextSerialNumber++;
+  }
+
+  make: string;
+  model: string;
+  year: number;
+  #serialNumber = Car.#generateSerialNumber();
+
+  constructor(make: string, model: string, year: number) {
+    this.make = make;
+    this.model = model;
+    this.year = year;
+  }
+}
+```
+
+The class-level counter is now not observable in any way from outside the class, either at build time or runtime.
+
+### 7.2.3 - Private field presence checks
+
+In TypeScript, `private fields are not directly accessible`, but we can detect their presence using the in keyword. This `checks if a private field exists on an instance` without attempting to access its value.
+
+```ts
+class Car {
+  static #nextSerialNumber: number;
+  static #generateSerialNumber() {
+    return this.#nextSerialNumber++;
+  }
+
+  make: string;
+  model: string;
+  year: number;
+  #serialNumber = Car.#generateSerialNumber();
+
+  constructor(make: string, model: string, year: number) {
+    this.make = make;
+    this.model = model;
+    this.year = year;
+  }
+  // The equals method checks if another object has the private field #serialNumber
+  equals(other: unknown) {
+    // If `other` is an object and has the #serialNumber field
+    if (other && typeof other === "object" && #serialNumber in other) {
+      other; // (parameter) other: Car - TypeScript infers `other` is of type `Car` here
+      return (other.#serialNumber === this.#serialNumber);
+    }
+    return false;
+  }
+}
+const c1 = new Car("Toyota", "Hilux", 1987);
+const c2 = c1;
+c2.equals(c1); // true or false depending on #serialNumber comparison
+```
+> This is useful for comparing instances of a class based on private properties without exposing those properties publicly.
+
+When we check for a private field using the in keyword, TypeScript can narrow the type of the object being checked. For example, if #serialNumber in other evaluates to true, it means other must be an instance of the same class that declared the private field (Car in this case). This is because `private fields are only accessible within the class where they are defined`, and other classes, even if they have private fields with the same name, cannot access them.
+
+### 7.2.4 - readonly
+
+The readonly modifier in TypeScript `can be applied to properties or class fields, making them immutable after their initial assignment`. This ensures that once a value is set for a field (either in the constructor or during declaration), it `cannot be changed later in the class`.
+
+```ts
+// @errors: 2540
+class Car {
+  static #nextSerialNumber: number;
+  static #generateSerialNumber() {
+    return this.#nextSerialNumber++;
+  }
+
+  public make: string;
+  public model: string;
+  public year: number;
+  readonly #serialNumber = Car.#generateSerialNumber();
+
+  constructor(make: string, model: string, year: number) {
+    this.make = make;
+    this.model = model;
+    this.year = year;
+  }
+
+  changeSerialNumber(num: number) {
+    this.#serialNumber = num; // Error: Cannot assign to '#serialNumber' because it is a read-only property.
+  }
+}
+```
