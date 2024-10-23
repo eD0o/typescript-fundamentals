@@ -533,3 +533,6 @@ class Truck extends Car {
 const t = new Truck();
 t.honk(); // "BEEP"
 ```
+
+## 7.4 - Type Guards
+
