@@ -356,7 +356,7 @@ class Car {
     // If `other` is an object and has the #serialNumber field
     if (other && typeof other === "object" && #serialNumber in other) {
       other; // (parameter) other: Car - TypeScript infers `other` is of type `Car` here
-      return (other.#serialNumber === this.#serialNumber);
+      return other.#serialNumber === this.#serialNumber;
     }
     return false;
   }
@@ -365,6 +365,7 @@ const c1 = new Car("Toyota", "Hilux", 1987);
 const c2 = c1;
 c2.equals(c1); // true or false depending on #serialNumber comparison
 ```
+
 > This is useful for comparing instances of a class based on private properties without exposing those properties publicly.
 
 When we check for a private field using the in keyword, TypeScript can narrow the type of the object being checked. For example, if #serialNumber in other evaluates to true, it means other must be an instance of the same class that declared the private field (Car in this case). This is because `private fields are only accessible within the class where they are defined`, and other classes, even if they have private fields with the same name, cannot access them.
@@ -396,4 +397,139 @@ class Car {
     this.#serialNumber = num; // Error: Cannot assign to '#serialNumber' because it is a read-only property.
   }
 }
+```
+
+## 7.3 - Param Properties & Overrides
+
+### 7.3.1 - Param Properties
+
+TypeScript provides `a more concise syntax to write classes`, through the use of param properties:
+
+```ts
+// Previous example:
+class Car {
+  make: string;
+  model: string;
+  year: number;
+  constructor(make: string, model: string, year: number) {
+    this.make = make;
+    this.model = model;
+    this.year = year;
+  }
+}
+```
+
+```ts
+// New example:
+class Car {
+  constructor(public make: string, public model: string, public year: number) {}
+}
+```
+
+- The arguments passed to the constructor should be string and available within the scope of the constructor as make, model and year.
+
+- This also creates public class fields on Car called and pass its values that was given to the constructor.
+
+To remember the constructor order in JS:
+
+1 - super()
+2 - param property initialization
+3 - other class field initialization
+4 - anything else that was in your constructor after super()
+
+So, in TypeScript the below code:
+
+```ts
+class Base {}
+
+class Car extends Base {
+  foo = console.log("class field initializer");
+  constructor(public make: string) {
+    super();
+    console.log("custom constructor stuff");
+  }
+}
+
+const c = new Car("honda");
+```
+
+Will be compiled as:
+
+```js
+// Output in JS
+"use strict";
+class Base {}
+class Car extends Base {
+  constructor(make) {
+    super();
+    this.make = make;
+    this.foo = console.log("class field initializer");
+    console.log("custom constructor stuff");
+  }
+}
+```
+
+### 7.3.2 - Overrides
+
+A common mistake, that has historically been difficult for TypeScript to assist with is typos when overriding a class method:
+
+```ts
+class Car {
+  honk() {
+    console.log("beep");
+  }
+}
+
+class Truck extends Car {
+  hoonk() {
+    // OOPS!
+    console.log("BEEP");
+  }
+}
+
+const t = new Truck();
+t.honk(); // "beep"
+```
+
+In this case, it looks like the intent was to override the base class method, but because of the typo, we defined an entirely new method with a new name. 
+
+TypeScript 5 includes an `override keyword that makes this easier to spot`:
+
+```ts
+class Car {
+  honk() {
+    console.log("beep");
+  }
+}
+
+class Truck extends Car {
+  override hoonk() {
+    // Error: This member cannot have an 'override' modifier because it is not declared in the base class 'Car'.
+    // Did you mean 'honk'?
+    console.log("BEEP");
+  }
+}
+
+const t = new Truck();
+t.honk(); // "beep"
+```
+
+The error message even correctly guessed what we meant to do! There’s a compiler option called `noImplicitOverride in tsconfig.json that you can enable to make sure that a correctly established override method remains an override`:
+
+```ts
+class Car {
+  honk() {
+    console.log("beep")
+  }
+}
+
+class Truck extends Car {
+  honk() {
+    // Error: This member must have an 'override' modifier because it overrides a member in the base class 'Car'.
+    console.log("BEEP")
+  }
+}
+
+const t = new Truck();
+t.honk(); // "BEEP"
 ```
