@@ -491,7 +491,7 @@ const t = new Truck();
 t.honk(); // "beep"
 ```
 
-In this case, it looks like the intent was to override the base class method, but because of the typo, we defined an entirely new method with a new name. 
+In this case, it looks like the intent was to override the base class method, but because of the typo, we defined an entirely new method with a new name.
 
 TypeScript 5 includes an `override keyword that makes this easier to spot`:
 
@@ -519,14 +519,14 @@ The error message even correctly guessed what we meant to do! There’s a compil
 ```ts
 class Car {
   honk() {
-    console.log("beep")
+    console.log("beep");
   }
 }
 
 class Truck extends Car {
   honk() {
     // Error: This member must have an 'override' modifier because it overrides a member in the base class 'Car'.
-    console.log("BEEP")
+    console.log("BEEP");
   }
 }
 
@@ -536,3 +536,160 @@ t.honk(); // "BEEP"
 
 ## 7.4 - Type Guards
 
+Type guards allow you to narrow down types within control flow, providing `concrete assumptions about a value's type`.
+
+A typical example involves using `type checks such as typeof, instanceof, or custom guards` to create code branches with specific type expectations.
+
+### 7.4.1 - Built-in Type Guards:
+
+- instanceof:
+
+Used to check if a value is an instance of a specific class:
+
+```ts
+let value:
+  | Date
+  | null
+  | undefined
+  | "pineapple"
+  | [number]
+  | { dateRange: [Date, Date] };
+
+if (value instanceof Date) {
+  // value is Date
+}
+```
+
+- typeof:
+
+Used to check primitive types:
+
+```ts
+if (typeof value === "string") {
+  // value is "pineapple"
+```
+
+- Other Common Guards:
+  - Specific value check: if (value === null)
+  - Truthy/falsy check: if (!value)
+  - Array check: if (Array.isArray(value))
+  - Property presence check: if ("dateRange" in value)
+
+> Type guards often return boolean, but not always. Built-in guards and most user-defined type guards return a boolean to indicate if a value matches the expected type.
+
+### 7.4.2 - User defined Type Guards:
+
+Type Predicates:
+
+When creating user-defined type guards, a type predicate (value is Type) can be used.
+
+This indicates that the `function narrows the type within the branch where the guard is true`:
+
+```ts
+interface CarLike {
+  make: string;
+  model: string;
+  year: number;
+}
+
+function isCarLike(value: any): value is CarLike {
+  return (
+    value &&
+    typeof value === "object" &&
+    "make" in value &&
+    typeof value.make === "string" &&
+    "model" in value &&
+    typeof value.model === "string" &&
+    "year" in value &&
+    typeof value.year === "number"
+  );
+}
+
+if (isCarLike(maybeCar)) {
+  // maybeCar is CarLike
+}
+```
+
+`asserts` Type Guards:
+
+These special type guards `throw an error if the condition is not met`, ensuring type safety by halting execution rather than returning a value:
+
+```ts
+function assertsIsCarLike(value: any): asserts value is CarLike {
+  if (!(value && typeof value === "object" && "make" in value)) {
+    throw new Error("Not a CarLike");
+  }
+}
+```
+
+Private Fields as Type Guards
+
+TypeScript `allows the use of private fields in classes as a type guard`:
+
+```ts
+class Car {
+  static #nextSerialNumber = 100;
+  #serialNumber = Car.#generateSerialNumber();
+
+  static isCar(value: any): value is Car {
+    return value && typeof value === "object" && #serialNumber in value;
+  }
+}
+```
+
+Using switch(true) for Narrowing
+
+A clean way to `narrow types when multiple type guards` are involved is using a switch(true) statement.
+
+This approach allows you to keep your control flow structured and `ensures that each case has a dedicated narrowing condition`:
+
+```ts
+switch (true) {
+  case value instanceof Bird:
+    value.fly();
+    break;
+  case value instanceof Fish:
+    value.swim();
+    break;
+}
+```
+
+Writing High-Quality Guards
+
+When designing type guards, `aim for clarity and accuracy to avoid making false type assumptions`. For instance, be cautious with guards that rely on falsy values:
+
+```ts
+function isNull(val: any): val is null {
+  return !val;
+}
+
+// This would incorrectly treat 0 and "" as null.
+```
+
+Additionally, `avoid overly complex or convoluted type guards`, as these can become difficult to maintain and debug over time. 
+
+Keep them as `simple and targeted as possible to ensure they perform their job without introducing ambiguity`.
+
+The `satisfies` Keyword
+
+The `satisfies operator ensures that an object conforms to a type`, while preserving specific type information.
+
+Unlike type assertions (as Type), which can lose precision, satisfies `verifies the object type without widening its shape`:
+
+```ts
+type DateLike = Date | number | string;
+
+type Holidays = { [k: string]: DateLike };
+
+const usHolidays = {
+  independenceDay: "July 4, 2024",
+  memorialDay: new Date("May 27, 2024"),
+  laborDay: 1725260400000,
+} satisfies Holidays;
+
+// The satisfies operator preserves specific type information while ensuring type safety.
+```
+
+In this example, while usHolidays matches the Holidays type, `each value retains its specific type—string, Date, or number`.
+
+This is especially `useful when defining object literals where retaining the original types is important` for future operations.
