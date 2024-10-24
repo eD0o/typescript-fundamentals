@@ -579,7 +579,8 @@ if (typeof value === "string") {
 
 ### 7.4.2 - User defined Type Guards:
 
-Type Predicates:
+
+### 7.4.2.1 - Type Predicates:
 
 When creating user-defined type guards, a type predicate (value is Type) can be used.
 
@@ -610,7 +611,7 @@ if (isCarLike(maybeCar)) {
 }
 ```
 
-`asserts` Type Guards:
+### 7.4.2.2 - `asserts` Type Guards:
 
 These special type guards `throw an error if the condition is not met`, ensuring type safety by halting execution rather than returning a value:
 
@@ -622,7 +623,7 @@ function assertsIsCarLike(value: any): asserts value is CarLike {
 }
 ```
 
-Private Fields as Type Guards
+### 7.4.2.3 - Private Fields as Type Guards
 
 TypeScript `allows the use of private fields in classes as a type guard`:
 
@@ -637,7 +638,7 @@ class Car {
 }
 ```
 
-Using switch(true) for Narrowing
+### 7.4.2.4 - switch(true) for Narrowing
 
 A clean way to `narrow types when multiple type guards` are involved is using a switch(true) statement.
 
@@ -654,7 +655,7 @@ switch (true) {
 }
 ```
 
-Writing High-Quality Guards
+### 7.4.2.5 - Writing High-Quality Guards
 
 When designing type guards, `aim for clarity and accuracy to avoid making false type assumptions`. For instance, be cautious with guards that rely on falsy values:
 
@@ -670,7 +671,7 @@ Additionally, `avoid overly complex or convoluted type guards`, as these can bec
 
 Keep them as `simple and targeted as possible to ensure they perform their job without introducing ambiguity`.
 
-The `satisfies` Keyword
+### 7.4.2.6 - The `satisfies` Keyword
 
 The `satisfies operator ensures that an object conforms to a type`, while preserving specific type information.
 
